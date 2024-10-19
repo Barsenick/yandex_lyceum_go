@@ -44,7 +44,3 @@ func TimeAgo(pastTime time.Time) string {
 		return fmt.Sprintf("%d years ago", years)
 	}
 }
-
-func main() {
-
-}
