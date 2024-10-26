@@ -24,6 +24,7 @@ func TestCalc(t *testing.T) {
 		{"35 + (10 - 2 * 5) + (6 / 3 * 5 - 10 + 2 * (2 * 3)", 0, true},
 		{"5*+7", 0, true},
 		{"5+7/", 0, true},
+		{"*5+7", 0, true},
 		{"valid input", 0, true},
 		{"", 0, true},
 	}
