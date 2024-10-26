@@ -27,6 +27,7 @@ func TestCalc(t *testing.T) {
 		{"*5+7", 0, true},
 		{"valid input", 0, true},
 		{"", 0, true},
+		{"5.1 + 5.2", 10.3, false},
 	}
 
 	for i, test := range tests {

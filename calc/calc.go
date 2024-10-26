@@ -47,11 +47,11 @@ func Calc(expression string) (float64, error) {
 	wasLastRuneOperator := false
 
 	for ii, r := range newExpression {
-		if !unicode.IsDigit(r) && r != '+' && r != '-' && r != '*' && r != '/' && r != '(' && r != ')' {
+		if !unicode.IsDigit(r) && r != '+' && r != '-' && r != '*' && r != '/' && r != '(' && r != ')' && r != '.' {
 			return 0, ErrInvalidInput
 		}
 		// накапливаем цифры для преобразования в число
-		if unicode.IsDigit(r) {
+		if unicode.IsDigit(r) || r == '.' {
 			wasLastRuneOperator = false
 			j++
 			// если последняя цифра в выражении - её нужно ниже добавить в out_arr
