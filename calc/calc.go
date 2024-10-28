@@ -2,6 +2,7 @@ package calc
 
 import (
 	"errors"
+	"math"
 	"slices"
 	"strconv"
 	"unicode"
@@ -24,6 +25,7 @@ func Calc(expression string) (float64, error) {
 	operationsStack := make([]rune, 0)
 
 	Priority := map[rune]int{
+		'^': 3,
 		'*': 2,
 		'/': 2,
 		'+': 1,
@@ -47,7 +49,7 @@ func Calc(expression string) (float64, error) {
 	wasLastRuneOperator := false
 
 	for ii, r := range newExpression {
-		if !unicode.IsDigit(r) && r != '+' && r != '-' && r != '*' && r != '/' && r != '(' && r != ')' && r != '.' {
+		if !unicode.IsDigit(r) && r != '+' && r != '-' && r != '*' && r != '/' && r != '^' && r != '(' && r != ')' && r != '.' {
 			return 0, ErrInvalidInput
 		}
 		// накапливаем цифры для преобразования в число
@@ -70,7 +72,7 @@ func Calc(expression string) (float64, error) {
 
 		// накапливаем операции
 		stack_len := len(operationsStack)
-		if r == '+' || r == '-' || r == '*' || r == '/' {
+		if r == '+' || r == '-' || r == '*' || r == '/' || r == '^' {
 			if wasLastRuneOperator {
 				return 0, ErrInvalidInput
 			}
@@ -133,7 +135,12 @@ func Calc(expression string) (float64, error) {
 	}
 
 	// считаем
-	left := out_arr
+	left := []interface{}{}
+	for _, token := range out_arr {
+		if token != '(' && token != ')' {
+			left = append(left, token)
+		}
+	}
 	right := make([]interface{}, 0)
 
 	for _, rr := range left {
@@ -169,6 +176,11 @@ func Calc(expression string) (float64, error) {
 						result = right[len(right)-2].(float64) / res
 						right = slices.Delete(right, len(right)-2, len(right))
 						right = append(right, result)
+
+					} else if lastElem == '^' {
+						result = math.Pow(right[len(right)-2].(float64), res)
+						right = slices.Delete(right, len(right)-2, len(right))
+						right = append(right, result)
 					}
 				}
 			} else {
@@ -187,8 +199,8 @@ func Calc(expression string) (float64, error) {
 			} else if rr == '-' {
 				result = right[len(right)-2].(float64) - right[len(right)-1].(float64)
 				right = slices.Delete(right, len(right)-2, len(right))
-
 				right = append(right, result)
+
 			} else if rr == '*' {
 				result = right[len(right)-2].(float64) * right[len(right)-1].(float64)
 				right = slices.Delete(right, len(right)-2, len(right))
@@ -199,6 +211,11 @@ func Calc(expression string) (float64, error) {
 					return 0, ErrDivisionByZero
 				}
 				result = right[len(right)-2].(float64) / right[len(right)-1].(float64)
+				right = slices.Delete(right, len(right)-2, len(right))
+				right = append(right, result)
+
+			} else if rr == '^' {
+				result = math.Pow(right[len(right)-2].(float64), right[len(right)-1].(float64))
 				right = slices.Delete(right, len(right)-2, len(right))
 				right = append(right, result)
 			}

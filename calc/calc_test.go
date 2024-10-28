@@ -28,6 +28,18 @@ func TestCalc(t *testing.T) {
 		{"valid input", 0, true},
 		{"", 0, true},
 		{"5.1 + 5.2", 10.3, false},
+		{"5^2", 25, false},
+		{"2^3", 8, false},
+		{"10^2", 100, false},
+		{"5^0", 1, false},
+		{"2^0", 1, false},
+		{"0^2", 0, false},
+		{"-2^3", 0, true},
+		{"^2", 0, true},
+		{"5^(2+1)", 125, false},
+		{"(2^3)^2", 64, false},
+		{"(2^3)^1", 8, false},
+		{"(2^3)^(1/3)", 2, false},
 	}
 
 	for i, test := range tests {
